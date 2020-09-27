@@ -1,10 +1,11 @@
 --- 
     steps: 
+      
+      -id: "rodando docker compose"
+      name: gcr.io/$PROJECT_ID/docker-compose
       args: 
         - "-f"
         - docker-compose.cloudbuild.yaml
         - up
         - "-d"
-      id: "rodando docker compose"
-      name: gcr.io/$PROJECT_ID/docker-compose
     
