@@ -1,6 +1,6 @@
---- 
-    steps: 
-      
+---
+    steps:
+
     - id: "Rodando docker compose"
       name: 'docker/compose'
       args: ['-f','docker-compose.cloudbuild.yaml','up','-d']
@@ -8,11 +8,11 @@
     - id: "Chown in /var/www"
       name: 'docker'
       args: ['exec','-u','root','-t','app','chown','-R','www-data:www-data','/var/www']
-    
+
     - id: "Rodando docker PS"
       name: 'gcr.io/cloud-builders/docker'
       args: ['ps']
-    
+
     - id: "Rodando composer"
       name: 'docker'
       args: ['exec','-t', 'app', 'composer', 'install']
@@ -32,3 +32,11 @@
     - id: "Rodando Phpunit"
       name: 'docker'
       args: ['exec','-t', 'app', 'php','/var/www/vendor/bin/phpunit','-c','/var/www/phpunit.xml']
+
+    - id: "Building images from Dockerfile.prod"
+      name: 'gcr.io/cloud-builders/docker'
+      args: ['build', '-t', 'grc.io/$PROJECT_ID/app-laravel:$SHORT_SHA','-f','Dockerfile.prod','.']
+
+    - id: "Pushing image"
+      name: 'gcr.io/cloud-builders/docker'
+      args: ['push', 'grc.io/$PROJECT_ID/app-laravel:$SHORT_SHA']
