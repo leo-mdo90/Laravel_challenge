@@ -34,9 +34,18 @@
       args: ['exec','-t', 'app', 'php','/var/www/vendor/bin/phpunit','-c','/var/www/phpunit.xml']
 
     - id: "Building images from Dockerfile.prod"
-      name: 'gcr.io/cloud-builders/docker'
+      name: 'docker'
       args: ['build', '-t', 'grc.io/$PROJECT_ID/app-laravel:$SHORT_SHA','-f','Dockerfile.prod','.']
 
     - id: "Pushing image"
-      name: 'gcr.io/cloud-builders/docker'
-      args: ['push', 'grc.io/$PROJECT_ID/app-laravel:$SHORT_SHA']
+      name: 'docker'
+      args: ['push', '-t', 'grc.io/$PROJECT_ID/app-laravel:$SHORT_SHA']
+
+    # - id: "Adjusting deployment file - k8s"
+    #   name: 'gcr.io/cloud-builders/gcloud'
+    #   entrypoint: '/bin/sh'
+    #   args:
+    #     - '-c'
+    #     - |
+    #       sed 's#img-app-deployment#grc.io/$PROJECT_ID/app-laravel:$SHORT_SHA#g' .k8s/app/deployment.yaml > k8s/app/deployment-new.yaml;
+    #       cat k8s/app/deployment-new.yaml;
